@@ -16,14 +16,14 @@ ENV \
     # set workdir as PYTHONPATH
     PYTHONPATH=/opt/app \
     TZ=Europe/Moscow \
-    TOKEN="TOKEN" \
+    TOKEN=TOKEN \
     MAX_SLOTS=100
 
 STOPSIGNAL SIGINT
 
 RUN mkdir /app
 WORKDIR /app
-RUN pip install  -Ur  /app/requirements.txt
 COPY . /app/
+RUN pip install  -Ur  /app/requirements.txt
 
-ENTRYPOINT ['python', 'bot.py']
+ENTRYPOINT ["python", "bot.py"]

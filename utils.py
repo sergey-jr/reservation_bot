@@ -13,7 +13,7 @@ def get_current_user_for_mh(func):
         query = settings.session.query(Person).filter(Person.user_id == user_data.id)
         current_person = query.all()
         if not current_person:
-            update.callback_query.answer('Сначала зарегиструйтесь')
+            update.message.reply_text('Сначала зарегиструйтесь')
         else:
             current_person = query.one()
             return func(update, context, current_person)
