@@ -5,32 +5,23 @@ from telegram.ext import CallbackContext
 
 import settings
 from db import Person, Reservation
+from messages import ErrorMessage
 
 
-def get_current_user_for_mh(func):
+def get_current_user(func):
     def wrapper(update: Update, context: CallbackContext):
-        user_data = update.message.from_user
+        if update.message:
+            holder = update.message
+        if update.callback_query:
+            holder = update.callback_query
+
+        user_data = holder.from_user
         query = settings.session.query(Person).filter(Person.user_id == user_data.id)
         current_person = query.all()
         if not current_person:
-            update.callback_query.answer('Сначала зарегиструйтесь')
+            update.message.reply_text(ErrorMessage.registration.value)
         else:
             current_person = query.one()
-            return func(update, context, current_person)
-
-    return wrapper
-
-
-def get_current_user_for_qh(func):
-    def wrapper(update: Update, context: CallbackContext):
-        query = update.callback_query
-        user_data = query.from_user
-        query_set = settings.session.query(Person).filter(Person.user_id == user_data.id)
-        current_person = query_set.all()
-        if not current_person:
-            query.answer('Сначала зарегиструйтесь')
-        else:
-            current_person = query_set.one()
             return func(update, context, current_person)
 
     return wrapper
